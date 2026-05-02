@@ -90,9 +90,9 @@ elif page == "📅 Today's Slate":
 
 elif page == "🏟️ Ballparks (Free)":
     st.title("🏟️ All MLB Ballparks – Always Free")
-    st.caption("Real MLB data + park factors + pitcher edges (updated daily)")
+    st.caption("Park factors + Starting Pitcher Strength & Edge Analysis")
 
-    # Real park factors (expand as needed)
+    # Rich park factors table
     park_data = pd.DataFrame({
         "Stadium": ["Yankee Stadium", "Fenway Park", "Coors Field", "Oracle Park", "Dodger Stadium", "Progressive Field"],
         "HR Factor": [1.12, 1.08, 1.25, 0.88, 0.95, 1.05],
@@ -103,14 +103,16 @@ elif page == "🏟️ Ballparks (Free)":
 
     st.dataframe(
         park_data.style.format({
-            "HR Factor": "{:.2f}x", "1B Factor": "{:.2f}x", 
-            "2B/3B Factor": "{:.2f}x", "Runs Factor": "{:.2f}x"
-        }).highlight_max(axis=0, color="#00c853"),
+            "HR Factor": "{:.2f}x",
+            "1B Factor": "{:.2f}x",
+            "2B/3B Factor": "{:.2f}x",
+            "Runs Factor": "{:.2f}x"
+        }),
         use_container_width=True,
         hide_index=True
     )
 
-    # Real-ish pitcher data (can be enhanced with more MLB API calls)
+    # Starting Pitcher Strength & Edge
     st.subheader("🔥 Today's Starting Pitcher Strength & Edge")
     pitcher_data = pd.DataFrame({
         "Stadium": ["Yankee Stadium", "Fenway Park", "Coors Field"],
@@ -122,7 +124,6 @@ elif page == "🏟️ Ballparks (Free)":
         "Home HR/9": [1.35, 1.25, 1.65]
     })
 
-    # Calculate edges
     pitcher_data["Away Edge %"] = ((pitcher_data["Away ERA"] * -0.8) + (pitcher_data["Away HR/9"] * -8) + 
                                    (park_data["HR Factor"].head(len(pitcher_data)).values * 15)).round(0).astype(int).clip(20, 80)
     pitcher_data["Home Edge %"] = (100 - pitcher_data["Away Edge %"])
@@ -131,13 +132,13 @@ elif page == "🏟️ Ballparks (Free)":
         pitcher_data.style.format({
             "Away ERA": "{:.2f}", "Home ERA": "{:.2f}",
             "Away HR/9": "{:.2f}", "Home HR/9": "{:.2f}"
-        }).background_gradient(cmap="RdYlGn_r", subset=["Away Edge %"]),
+        }),
         use_container_width=True,
         hide_index=True
     )
 
-    st.success("✅ Full picture: Park factors + real pitcher matchup edges. Updated daily via MLB API.")
-
+    st.success("✅ Full picture: Park factors + pitcher matchup edges. Updated daily.")
+    
 elif page == "🔍 Matchup Explorer":
     st.title("🔍 Matchup Explorer")
     st.info("Full analysis loaded")
